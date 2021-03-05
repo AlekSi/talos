@@ -24,10 +24,15 @@ import (
 )
 
 // Registrator is the concrete type that implements the factory.Registrator and
-// networkapi.NetworkServer interfaces.
+// healthapi.HealthServer and networkapi.NetworkServiceServer interfaces.
+//
+//nolint:maligned
 type Registrator struct {
 	Networkd *networkd.Networkd
 	Conn     *rtnetlink.Conn
+
+	healthapi.UnimplementedHealthServer
+	networkapi.UnimplementedNetworkServiceServer
 }
 
 // NewRegistrator builds new Registrator instance.

@@ -15,8 +15,12 @@ import (
 )
 
 // InspectServer implements InspectService API.
+//
+//nolint:maligned
 type InspectServer struct {
 	server *Server
+
+	inspectapi.UnimplementedInspectServiceServer
 }
 
 // ControllerRuntimeDependencies implements inspect.InspectService interface.

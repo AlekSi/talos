@@ -19,12 +19,18 @@ import (
 )
 
 // Registrator is the concrete type that implements the factory.Registrator and
-// securityapi.SecurityServer interfaces.
+// securityapi.SecurityServiceServer interfaces.
+//
+//nolint:maligned
 type Registrator struct {
 	Config config.Provider
+
+	securityapi.UnimplementedSecurityServiceServer
 }
 
 // Register implements the factory.Registrator interface.
+//
+//nolint:interfacer
 func (r *Registrator) Register(s *grpc.Server) {
 	securityapi.RegisterSecurityServiceServer(s, r)
 }

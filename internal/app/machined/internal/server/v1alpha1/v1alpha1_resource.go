@@ -20,8 +20,12 @@ import (
 )
 
 // ResourceServer implements ResourceService API.
+//
+//nolint:maligned
 type ResourceServer struct {
 	server *Server
+
+	resourceapi.UnimplementedResourceServiceServer
 }
 
 func marshalResource(r resource.Resource) (*resourceapi.Resource, error) {

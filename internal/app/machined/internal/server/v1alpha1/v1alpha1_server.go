@@ -77,11 +77,17 @@ const MinimumEtcdUpgradeLeaseLockSeconds = 60
 // OSPathSeparator is the string version of the os.PathSeparator.
 const OSPathSeparator = string(os.PathSeparator)
 
-// Server implements the gRPC service server.
+// Server implements ClusterService and MachineService APIs
+// and is also responsible for registering ResourceServer and InspectServer.
+//
+//nolint:maligned
 type Server struct {
 	Controller runtime.Controller
 
 	server *grpc.Server
+
+	cluster.UnimplementedClusterServiceServer
+	machine.UnimplementedMachineServiceServer
 }
 
 func (s *Server) checkSupported(feature runtime.ModeCapability) error {

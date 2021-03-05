@@ -23,22 +23,26 @@ import (
 	v1alpha1machine "github.com/talos-systems/talos/pkg/machinery/config/types/v1alpha1/machine"
 )
 
-// Server implements machine.MachineService.
+// Server implements machine.MachineService, network.NetworkService, and storage.StorageService.
+//
+//nolint:maligned
 type Server struct {
+	runtime  runtime.Runtime
+	logger   *log.Logger
+	cfgCh    chan []byte
+	server   *grpc.Server
+	storaged storaged.Server
+
+	storage.UnimplementedStorageServiceServer
 	machine.UnimplementedMachineServiceServer
 	network.UnimplementedNetworkServiceServer
-	storaged.Server
-	runtime runtime.Runtime
-	cfgCh   chan []byte
-	logger  *log.Logger
-	server  *grpc.Server
 }
 
 // New initializes and returns a `Server`.
 func New(r runtime.Runtime, logger *log.Logger, cfgCh chan []byte) *Server {
 	return &Server{
-		logger:  logger,
 		runtime: r,
+		logger:  logger,
 		cfgCh:   cfgCh,
 	}
 }
@@ -50,6 +54,11 @@ func (s *Server) Register(obj *grpc.Server) {
 	storage.RegisterStorageServiceServer(obj, s)
 	machine.RegisterMachineServiceServer(obj, s)
 	network.RegisterNetworkServiceServer(obj, s)
+}
+
+// Disks implements storage.StorageService.
+func (s *Server) Disks(ctx context.Context, in *empty.Empty) (reply *storage.DisksResponse, err error) {
+	return s.storaged.Disks(ctx, in)
 }
 
 // ApplyConfiguration implements machine.MachineService.

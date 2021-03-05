@@ -19,9 +19,14 @@ import (
 )
 
 // Registrator is the concrete type that implements the factory.Registrator and
-// timeapi.Init interfaces.
+// healthapi.HealthServer and timeapi.TimeServiceServer interfaces.
+//
+//nolint:maligned
 type Registrator struct {
 	Timed *ntp.NTP
+
+	healthapi.UnimplementedHealthServer
+	timeapi.UnimplementedTimeServiceServer
 }
 
 // NewRegistrator builds new Registrator instance.
@@ -32,6 +37,8 @@ func NewRegistrator(n *ntp.NTP) *Registrator {
 }
 
 // Register implements the factory.Registrator interface.
+//
+//nolint:interfacer
 func (r *Registrator) Register(s *grpc.Server) {
 	timeapi.RegisterTimeServiceServer(s, r)
 	healthapi.RegisterHealthServer(s, r)
